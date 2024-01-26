@@ -15,7 +15,7 @@ app.use(express.json());
 const checkDomain = (req, res, next) => {
     const allowedDomain = process.env.DOMAIN_ALLOW;
     if (!req.headers.origin || req.headers.origin !== allowedDomain) {
-        return res.status(403).send(`Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at ${req.headers.origin}`);
+        return res.status(403).send(`The request from ${req.headers.origin} has been blocked due to Cross-Origin Request Policy restrictions.`);
     }
     res.header("Access-Control-Allow-Origin", allowedDomain);
     next();
