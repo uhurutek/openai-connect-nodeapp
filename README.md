@@ -8,7 +8,7 @@ The OpenAI Connect Node App is an open-source project designed to serve as a sim
 
 Before running the application, make sure you have the following prerequisites installed:
 
-- Node.js
+- Node v20.10.0
 - npm (Node Package Manager)
 - OpenAI GPT-3.5 API Key
 - Assistant ID from OpenAI
