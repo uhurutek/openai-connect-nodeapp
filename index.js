@@ -1,15 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const OpenAI = require('openai');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 8000;
 const openAiKey = process.env.GPT_API_KEY;
 const assistant = process.env.GPT_ASSISTANT_ID;
-app.use(cors(process.env.DOMAIN_ALLOW));
+app.use(cors({
+    origin: process.env.DOMAIN_ALLOW,
+    optionsSuccessStatus: 200
+}));
 app.use(express.json());
-app.use(bodyParser.json());
+
+const checkDomain = (req, res, next) => {
+    const allowedDomain = process.env.DOMAIN_ALLOW;
+    if (!req.headers.origin || req.headers.origin !== allowedDomain) {
+        return res.status(403).send(`Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at ${req.headers.origin}`);
+    }
+    res.header("Access-Control-Allow-Origin", allowedDomain);
+    next();
+};
+
+app.use(checkDomain);
 
 const openai = new OpenAI({ apiKey: openAiKey });
 
@@ -41,5 +53,5 @@ app.post("/chats/:threadID/:question", async (req, res) => {
 });
 
 
-app.listen(port, () => { console.log(`openai-connect-node app is running on port: ${port}`) });
+app.listen(port, () => { console.log(`openai-connect-nodeapp is running on port: ${port}`) });
 
