@@ -4,10 +4,10 @@ const bodyParser = require('body-parser');
 const OpenAI = require('openai');
 require('dotenv').config();
 const app = express();
-const port = process.env.PORT || 4000;
-const openAiKey = process.env.API_KEY;
-const assistant = process.env.ASSISTANT_ID;
-app.use(cors());
+const port = process.env.PORT || 8000;
+const openAiKey = process.env.GPT_API_KEY;
+const assistant = process.env.GPT_ASSISTANT_ID;
+app.use(cors(process.env.DOMAIN_ALLOW));
 app.use(express.json());
 app.use(bodyParser.json());
 
@@ -33,7 +33,7 @@ app.post("/chats/:threadID/:question", async (req, res) => {
     } while (response.status === 'queued' || response.status === 'in_progress');
 
     const messages = await openai.beta.threads.messages.list(threadID);
-    if (!messages.data || messages.data.length > 0) {
+    if (messages.data || messages.data.length > 0) {
         res.send(messages.data[0].content[0].text.value);
     } else {
         res.status(404).send("No response received");
@@ -41,5 +41,5 @@ app.post("/chats/:threadID/:question", async (req, res) => {
 });
 
 
-app.listen(port, () => { console.log(`openai-connect-nodeapp is running on port: ${port}`) });
+app.listen(port, () => { console.log(`openai-connect-node app is running on port: ${port}`) });
 
