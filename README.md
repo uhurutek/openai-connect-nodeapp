@@ -37,8 +37,8 @@ Before running the application, make sure you have the following prerequisites i
 
    ```env
    PORT=8000
-   API_KEY=your_openai_GPT-3.5_api_key
-   ASSISTANT_ID=your_assistant_id
+   GPT_API_KEY=your_openai_GPT-3.5_api_key
+   GPT_ASSISTANT_ID=your_assistant_id
    DOMAIN_ALLOW=http://your-client-domain.com
    GPT_RUN_SLEEP=3
    ```
