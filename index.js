@@ -33,7 +33,7 @@ app.post("/chats/:threadID/:question", async (req, res) => {
     } while (response.status === 'queued' || response.status === 'in_progress');
 
     const messages = await openai.beta.threads.messages.list(threadID);
-    if (messages.data || messages.data.length > 0) {
+    if (messages.data && messages.data.length > 0) {
         res.send(messages.data[0].content[0].text.value);
     } else {
         res.status(404).send("No response received");

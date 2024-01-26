@@ -2,7 +2,7 @@
 
 ## Overview
 
-The OpenAI Connect Node.js App is an open-source project designed to serve as a simple interface for interacting with OpenAI's GPT (Generative Pre-trained Transformer) models. The app facilitates threaded conversations, allowing users to engage in dynamic and context-aware interactions.
+The OpenAI Connect Node App is an open-source project designed to serve as a simple interface for interacting with OpenAI's GPT (Generative Pre-trained Transformer) models. The app facilitates threaded conversations, allowing users to engage in dynamic and context-aware interactions.
 
 ## Prerequisites
 
