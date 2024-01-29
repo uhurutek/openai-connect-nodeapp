@@ -74,6 +74,12 @@ Before running the application, make sure you have the following prerequisites i
    curl -X POST http://localhost:8000/chats/your_thread_id/Can you help me with this question?
    ```
 
+## Deploy with docker
+
+```bash
+docker compose up -d --build --remove-orphans
+```
+
 ## License
 
 This project is licensed under the [MIT License](./LICENSE). Feel free to use and modify the code as needed.
