@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openai-connect-node
+    container_name: openai-connect-node
+    restart: always
+    env_file: .env
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+ 
+volumes:
+  node_modules: 
