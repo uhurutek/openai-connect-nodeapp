@@ -30,7 +30,9 @@
     "url": "https://github.com/uhurutek/openai-connect-nodeapp.git"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "yarn && pm2 start index.js",
+    "restart": "yarn && pm2 restart index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -38,7 +40,8 @@
     "express": "^4.18.2",
     "markdown-it": "^14.0.0",
     "nodemon": "^3.0.3",
-    "openai": "^4.25.0"
+    "openai": "^4.25.0",
+    "pm2": "^5.3.1"
   },
   "devDependencies": {}
 }

@@ -80,6 +80,20 @@ Before running the application, make sure you have the following prerequisites i
 docker compose up -d --build --remove-orphans
 ```
 
+## Deploy with pm2
+
+For the initial start, use:
+
+```bash
+yarn start
+```
+
+And for subsequent restarts, use:
+
+```bash
+yarn restart
+```
+
 ## License
 
 This project is licensed under the [MIT License](./LICENSE). Feel free to use and modify the code as needed.
