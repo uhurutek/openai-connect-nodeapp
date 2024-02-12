@@ -14,7 +14,7 @@ const port = process.env.PORT || 8000;
 
 // Retrieve necessary environment variables
 const openAiKey = process.env.GPT_API_KEY;
-const assistant = process.env.GPT_ASSISTANT_ID;
+// const assistant = process.env.GPT_ASSISTANT_ID;
 const allowedDomain = process.env.DOMAIN_ALLOWED;
 
 // Initialize OpenAI API with the provided key
@@ -31,18 +31,22 @@ app.use(cors({
 // Middleware to re-validate the origin of incoming requests
 app.use((req, res, next) => {
     // Block requests from disallowed origins
-    if (!req.headers.origin || req.headers.origin !== allowedDomain) {
-        // If the request does not have a valid origin or is not from the allowed domain,
+    const origin = req.headers.origin;
+    // Check if the request does not have a valid origin (not present) or is not from an allowed domain.
+    if (!origin || !allowedDomain.includes(origin)) {
+        // If the request does not have a valid origin or is not from an allowed domain,
         // respond with a 403 Forbidden status and an error message indicating the disallowed origin.
-        return res.status(403).send(`The request from ${req.headers.origin} is not allow.`);
+        return res.status(403).send(`The request from ${origin} is not allowed.`);
     }
-    // Set the Access-Control-Allow-Origin header to the allowed domain,
-    // allowing cross-origin requests from the specified domain.
-    res.header("Access-Control-Allow-Origin", allowedDomain);
+
+    // Set the Access-Control-Allow-Origin header to the requested origin,
+    // allowing cross-origin requests from the specified domains.
+    res.header("Access-Control-Allow-Origin", origin);
 
     // Continue to the next middleware or route handler in the Express pipeline.
     next();
 });
+
 
 // Parse incoming JSON requests
 app.use(express.json());
@@ -54,12 +58,12 @@ app.post("/node-api/chats", async (req, res) => {
 });
 
 // Endpoint to handle user questions within a specific chat thread
-app.post("/node-api/chats/:threadID/:question", async (req, res) => {
-    const { threadID, question } = req.params;
+app.post("/node-api/chats/:assistant/:threadID/:message", async (req, res) => {
+    const { threadID, message, assistant } = req.params;
     // Add user's question to the chat thread
     await openai.beta.threads.messages.create(threadID, {
         role: "user",
-        content: question,
+        content: message,
     });
     // Run the chat thread and wait for a response
     const run = await openai.beta.threads.runs.create(threadID, { assistant_id: assistant });
