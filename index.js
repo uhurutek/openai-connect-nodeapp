@@ -22,10 +22,17 @@ const openai = new OpenAI({ apiKey: openAiKey });
 
 
 // Enable Cross-Origin Resource Sharing (CORS) for the specified domain
-app.use(cors({
-    origin: allowedDomain,
-    optionsSuccessStatus: 200
-}));
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (allowedDomain.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error(`The request from ${origin} is not allowed.`))
+        }
+    }
+}
+
+app.use(cors(corsOptions))
 
 
 // Middleware to re-validate the origin of incoming requests
