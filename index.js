@@ -34,6 +34,8 @@ var corsOptions = {
 
 app.use(cors(corsOptions))
 
+// app.use(cors());
+
 
 // Middleware to re-validate the origin of incoming requests
 app.use((req, res, next) => {
@@ -60,37 +62,64 @@ app.use(express.json());
 
 // Endpoint to create a new chat thread
 app.post("/node-api/chats", async (req, res) => {
-    // Create a new chat thread using OpenAI API and send the response
-    res.send(await openai.beta.threads.create())
+
+    try {
+        // Create a new chat thread using OpenAI API and send the response
+        const response = await openai.beta.threads.create()
+        res.send(response)
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+        console.log(error)
+    }
 });
 
 // Endpoint to handle user questions within a specific chat thread
 app.post("/node-api/chats/:assistant/:threadID/:message", async (req, res) => {
     const { threadID, message, assistant } = req.params;
-    // Add user's question to the chat thread
-    await openai.beta.threads.messages.create(threadID, {
-        role: "user",
-        content: message,
-    });
-    // Run the chat thread and wait for a response
-    const run = await openai.beta.threads.runs.create(threadID, { assistant_id: assistant });
 
-    let response;
-    // Retrieve and send the assistant's response
-    do {
-        response = await openai.beta.threads.runs.retrieve(threadID, run.id);
-        await new Promise(resolve => setTimeout(resolve, parseInt(process.env.GPT_RUN_SLEEP || 10) * 1000));
-    } while (response.status === 'queued' || response.status === 'in_progress');
+    try {
 
-    const messages = await openai.beta.threads.messages.list(threadID);
-    if (messages.data && messages.data.length > 0) {
-        let data = messages.data[0].content[0].text.value;
-        data = data.trim()
-        res.send(md.render(data));
-    } else {
-        res.status(404).send("No response received");
+        // Add user's question to the chat thread
+        await openai.beta.threads.messages.create(threadID, {
+            role: "user",
+            content: message,
+        });
+
+        // Run the chat thread and wait for a response
+        const run = await openai.beta.threads.runs.create(threadID, { assistant_id: assistant });
+
+        let response;
+        const promises = [];
+
+        // Retrieve responses while status is 'queued' or 'in_progress'
+        do {
+            promises.push(openai.beta.threads.runs.retrieve(threadID, run.id));
+            const responses = await Promise.all(promises);
+
+            // Extract the final response from the array of responses
+            response = responses[responses.length - 1];
+        } while (response.status === 'queued' || response.status === 'in_progress');
+
+        // Wait for all promises to resolve
+
+
+        const messages = await openai.beta.threads.messages.list(threadID);
+        if (messages.data && messages.data.length > 0) {
+            let data = messages.data[0].content[0].text.value;
+            data = data.trim();
+            res.send(md.render(data));
+        } else {
+            res.status(404).send("No response received");
+        }
+
+
+    } catch (error) {
+        // Handle errors
+        console.error('Error processing chat:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
+
 
 // Start the Express server on the specified port
 app.listen(port, () => { console.log(`openai-connect-node-app is running on port: ${port}`) });
