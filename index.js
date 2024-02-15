@@ -20,7 +20,6 @@ const allowedDomain = process.env.DOMAIN_ALLOWED;
 // Initialize OpenAI API with the provided key
 const openai = new OpenAI({ apiKey: openAiKey });
 
-
 // Enable Cross-Origin Resource Sharing (CORS) for the specified domain
 var corsOptions = {
     origin: function (origin, callback) {
@@ -33,8 +32,6 @@ var corsOptions = {
 }
 
 app.use(cors(corsOptions))
-
-// app.use(cors());
 
 
 // Middleware to re-validate the origin of incoming requests
@@ -78,7 +75,6 @@ app.post("/node-api/chats/:assistant/:threadID/:message", async (req, res) => {
     const { threadID, message, assistant } = req.params;
 
     try {
-
         // Add user's question to the chat thread
         await openai.beta.threads.messages.create(threadID, {
             role: "user",
@@ -87,22 +83,13 @@ app.post("/node-api/chats/:assistant/:threadID/:message", async (req, res) => {
 
         // Run the chat thread and wait for a response
         const run = await openai.beta.threads.runs.create(threadID, { assistant_id: assistant });
-
         let response;
-        const promises = [];
-
-        // Retrieve responses while status is 'queued' or 'in_progress'
         do {
-            promises.push(openai.beta.threads.runs.retrieve(threadID, run.id));
-            const responses = await Promise.all(promises);
-
-            // Extract the final response from the array of responses
-            response = responses[responses.length - 1];
+            response = await openai.beta.threads.runs.retrieve(threadID, run.id);
+            await new Promise(resolve => setTimeout(resolve, parseInt(process.env.GPT_RUN_SLEEP || 3) * 1000));
         } while (response.status === 'queued' || response.status === 'in_progress');
 
         // Wait for all promises to resolve
-
-
         const messages = await openai.beta.threads.messages.list(threadID);
         if (messages.data && messages.data.length > 0) {
             let data = messages.data[0].content[0].text.value;
