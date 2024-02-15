@@ -39,7 +39,7 @@ Before running the application, make sure you have the following prerequisites i
    PORT=8000
    GPT_API_KEY=your_openai_GPT-3.5_api_key
    GPT_ASSISTANT_ID=your_assistant_id
-   DOMAIN_ALLOW=http://your-client-domain.com
+   DOMAIN_ALLOW=[http://your-client-domain.com,http://your-client2-domain.com] 
    GPT_RUN_SLEEP=3
    ```
 
@@ -77,7 +77,7 @@ Before running the application, make sure you have the following prerequisites i
 ## Deploy with docker
 
 ```bash
-docker compose up -d --build --remove-orphans
+docker compose -f docker/docker-compose.yml up -d --build
 ```
 
 ## Deploy with pm2
