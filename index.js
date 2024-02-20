@@ -58,7 +58,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Endpoint to create a new chat thread
-app.post("/node-api/chats", async (req, res) => {
+app.post("/openai-connect-node/chats", async (req, res) => {
 
     try {
         // Create a new chat thread using OpenAI API and send the response
@@ -71,7 +71,7 @@ app.post("/node-api/chats", async (req, res) => {
 });
 
 // Endpoint to handle user questions within a specific chat thread
-app.post("/node-api/chats/:assistant/:threadID/:message", async (req, res) => {
+app.post("/openai-connect-node/chats/:assistant/:threadID/:message", async (req, res) => {
     const { threadID, message, assistant } = req.params;
 
     try {
