@@ -10,4 +10,4 @@ services:
     restart: always
     env_file: .env
     ports:
-      - "${APP_PORT}:${APP_PORT}"
+      - "${PORT}:${PORT}"
