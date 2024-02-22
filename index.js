@@ -24,8 +24,7 @@ const openai = new OpenAI({ apiKey: openAiKey });
 // Enable Cross-Origin Resource Sharing (CORS) for the specified domain
 var corsOptions = {
     origin: function (origin, callback) {
-        if (isCorsCheckDisabled) callback(null, true);
-        if (allowedDomain.indexOf(origin) !== -1) {
+        if (allowedDomain.indexOf(origin) !== -1 || isCorsCheckDisabled == "true") {
             callback(null, true)
         } else {
             callback(new Error(`The request from ${origin} is not allowed.`))
@@ -38,7 +37,7 @@ app.use(cors(corsOptions))
 
 // Middleware to re-validate the origin of incoming requests
 app.use((req, res, next) => {
-    if (isCorsCheckDisabled) return next();
+    if (isCorsCheckDisabled == "true") return next();
 
     // Block requests from disallowed origins
     const origin = req.headers.origin;
