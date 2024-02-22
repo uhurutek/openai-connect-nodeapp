@@ -11,11 +11,12 @@ const app = express();
 
 // Set the port for the server to run on, defaulting to 8000
 const port = process.env.PORT || 8000;
-
+const app_prefix = process.env.APP_PREFIX || "/openai-connect-node";
 // Retrieve necessary environment variables
 const openAiKey = process.env.GPT_API_KEY;
 // const assistant = process.env.GPT_ASSISTANT_ID;
 const allowedDomain = process.env.DOMAIN_ALLOWED;
+const isCorsCheckDisabled = process.env.DISABLE_CORS_CHECK;
 
 // Initialize OpenAI API with the provided key
 const openai = new OpenAI({ apiKey: openAiKey });
@@ -23,6 +24,7 @@ const openai = new OpenAI({ apiKey: openAiKey });
 // Enable Cross-Origin Resource Sharing (CORS) for the specified domain
 var corsOptions = {
     origin: function (origin, callback) {
+        if (isCorsCheckDisabled) callback(null, true);
         if (allowedDomain.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
@@ -36,6 +38,8 @@ app.use(cors(corsOptions))
 
 // Middleware to re-validate the origin of incoming requests
 app.use((req, res, next) => {
+    if (isCorsCheckDisabled) return next();
+
     // Block requests from disallowed origins
     const origin = req.headers.origin;
     // Check if the request does not have a valid origin (not present) or is not from an allowed domain.
@@ -58,7 +62,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Endpoint to create a new chat thread
-app.post("/openai-connect-node/chats", async (req, res) => {
+app.post(app_prefix + "/chats", async (req, res) => {
 
     try {
         // Create a new chat thread using OpenAI API and send the response
@@ -71,7 +75,7 @@ app.post("/openai-connect-node/chats", async (req, res) => {
 });
 
 // Endpoint to handle user questions within a specific chat thread
-app.post("/openai-connect-node/chats/:assistant/:threadID/:message", async (req, res) => {
+app.post(`${app_prefix}/chats/:assistant/:threadID/:message`, async (req, res) => {
     const { threadID, message, assistant } = req.params;
 
     try {

@@ -1,16 +1,7 @@
 FROM node:20.10.0-alpine
-
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-
-WORKDIR /home/node/app
-
-COPY package*.json ./
-
+LABEL org.opencontainers.image.source=https://github.com/uhurutek/openai-connect-nodeapp
+RUN mkdir -p /app/node_modules && chown -R node:node /app
+WORKDIR /app
 COPY . .
-
 USER node
-
 RUN yarn install
-
-
-

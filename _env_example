@@ -1,4 +1,6 @@
+APP_PREFIX=/openai-connect-node
 GPT_API_KEY=
-PORT=
-GPT_RUN_SLEEP=
-DOMAIN_ALLOWED= [http://your-client-domain.com,http://your-client1-domain.com]
+PORT=3020
+GPT_RUN_SLEEP=2
+DOMAIN_ALLOWED=[domain1.com, domain2.com]
+DISABLE_CORS_CHECK=true
